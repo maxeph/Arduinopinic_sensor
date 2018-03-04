@@ -2,7 +2,7 @@
 
 #define DEBUG 1 // if 1, debug with Serial
 
-uint8_t msgpacket[] = {1,2,3,4,5,6,7,8}; // init unsigned bytes to be sent over
+byte msgpacket[] = {1,2,3,4}; // init unsigned bytes to be sent over
 
 void float2int(float *farg, int *intresult) { // Convert float 2 a signed int for 2 decimal precision
   *intresult = *farg * 100;
@@ -10,6 +10,13 @@ void float2int(float *farg, int *intresult) { // Convert float 2 a signed int fo
 
 void bytes2int(float *farg, int *intresult) { // Convert float 2 a signed int for 2 decimal precision
 
+}
+
+void buildpacket(byte msg[4], byte part1[2], byte part2[2]) { // build array to be sent
+  msg[0] = part1[0];
+  msg[1] = part1[1];
+  msg[2] = part2[0];
+  msg[3] = part2[1];
 }
 
 union intarray { // shared memory for int and byte array to get its bytes
@@ -45,6 +52,10 @@ void setup() {
     Serial.print(itempeau.part[0],HEX);
     Serial.print(" ");
     Serial.println(itempeau.part[1],HEX);
+    buildpacket(msgpacket,itempext.part,itempeau.part);
+    for(int i=0;i<4;i++) {
+    Serial.println(msgpacket[i]);
+    }
   }
 
 }
