@@ -22,29 +22,29 @@ intarray itempeau;
 /* */
 
 void setup() {
-if (DEBUG) {  // Sending over Serial to make sure it works
-  Serial.begin(9600);
-  Serial.println("Initialising debug mode...");
+  if (DEBUG) {  // Sending over Serial to make sure it works
+    Serial.begin(9600);
+    Serial.println("Initialising debug mode...");
 
-  float2int(&tempext, &itempext.ints); // converting floats to int and storing in structs objects
-  float2int(&tempeau, &itempeau.ints);
+    float2int(&tempext, &itempext.ints); // converting floats to int and storing in structs objects
+    float2int(&tempeau, &itempeau.ints);
 
-  Serial.print("Outside temperature (°C) : ");
-  Serial.println(float(itempext.ints)/100);
-  Serial.print('In bytes : ');
-  Serial.print(itempext.bytes[0],HEX);
-  Serial.print(" ");
-  Serial.println(itempext.bytes[1],HEX);
-  Serial.print("Water temperature (°C) : ");
-  Serial.println(float(itempeau.ints)/100);
-  Serial.print('In bytes : ');
-  Serial.print(itempeau.bytes[0],HEX);
-  Serial.print(" ");
-  Serial.println(itempeau.bytes[1],HEX);
+    Serial.print("Outside temperature (°C) : ");
+    Serial.println(float(itempext.ints)/100);
+    Serial.print('In bytes : ');
+    Serial.print(itempext.bytes[0],HEX);
+    Serial.print(" ");
+    Serial.println(itempext.bytes[1],HEX);
+    Serial.print("Water temperature (°C) : ");
+    Serial.println(float(itempeau.ints)/100);
+    Serial.print('In bytes : ');
+    Serial.print(itempeau.bytes[0],HEX);
+    Serial.print(" ");
+    Serial.println(itempeau.bytes[1],HEX);
   }
 
 }
 
 void loop() {
-    // put your main code here, to run repeatedly:
+  // put your main code here, to run repeatedly:
 }
