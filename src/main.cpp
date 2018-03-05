@@ -4,12 +4,20 @@
 
 byte msgpacket[] = {1,2,3,4}; // init unsigned bytes to be sent over
 
+union intarray { // shared memory for int and byte array to get its bytes
+  int ints;
+  byte part[2];
+};
+
 void float2int(float *farg, int *intresult) { // Convert float 2 a signed int for 2 decimal precision
   *intresult = *farg * 100;
 }
 
-void bytes2int(float *farg, int *intresult) { // Convert float 2 a signed int for 2 decimal precision
-
+int bytes2int(byte arg[2]) { // Convert a 2byte array into int
+intarray result;
+result.part[0] = arg[0];
+result.part[1] = arg[1];
+return result.ints;
 }
 
 void buildpacket(byte msg[4], byte part1[2], byte part2[2]) { // build array to be sent
@@ -19,10 +27,7 @@ void buildpacket(byte msg[4], byte part1[2], byte part2[2]) { // build array to 
   msg[3] = part2[1];
 }
 
-union intarray { // shared memory for int and byte array to get its bytes
-  int ints;
-  byte part[2];
-};
+
 
 /* to delete when setting up sensors */
 
@@ -56,6 +61,7 @@ void setup() {
     for(int i=0;i<4;i++) {
     Serial.println(msgpacket[i]);
     }
+    Serial.println(bytes2int(itempeau.part));
   }
 
 }
