@@ -1,6 +1,10 @@
 #include <Arduino.h>
+#include <Manchester.h>  //Initialising 433 wireless library
+
 
 #define DEBUG 1 // if 1, debug with Serial
+#define TX_433 2 // Pin connecter to Transmitter
+
 
 byte msgpacket[] = {1,2,3,4}; // init unsigned bytes to be sent over
 
@@ -38,6 +42,9 @@ intarray itempext, itempeau;
 /* */
 
 void setup() {
+
+man.setupTransmit(TX_433, MAN_600); // Initialising 433 wireless
+
   if (DEBUG) {  // Sending over Serial to make sure it works
     Serial.begin(9600);
     Serial.println("Initialising debug mode...");
@@ -61,11 +68,13 @@ void setup() {
     for(int i=0;i<4;i++) {
     Serial.println(msgpacket[i]);
     }
-    Serial.println(bytes2int(itempeau.part));
   }
 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  if (DEBUG) {
+  man.transmit(0x01); // Test transmitter
+  delay(1000);
+}
 }
