@@ -4,10 +4,11 @@
 
 #define DEBUG 1 // if 1, debug with Serial
 #define TX_433 2 // Pin connecter to Transmitter
-#define PCKTLEN 4
+#define MSGLEN 4
+#define PCKTLEN MSGLEN+1
 
 
-byte msgpacket[4] = {PCKTLEN,2,3,4}; // init unsigned bytes to be sent over
+byte msgpacket[PCKTLEN] = {PCKTLEN}; // init unsigned bytes to be sent over
 
 union intarray { // shared memory for int and byte array to get its bytes
   int ints;
@@ -25,11 +26,12 @@ result.part[1] = arg[1];
 return result.ints;
 }
 
-void buildpacket(byte msg[4], byte part1[2], byte part2[2]) { // build array to be sent
-  msg[0] = part1[0];
-  msg[1] = part1[1];
-  msg[2] = part2[0];
-  msg[3] = part2[1];
+void buildpacket(byte msg[PCKTLEN], byte part1[2], byte part2[2]) { // build array to be sent
+  msg[0] = PCKTLEN;
+  msg[1] = part1[0];
+  msg[2] = part1[1];
+  msg[3] = part2[0];
+  msg[4] = part2[1];
 }
 
 
@@ -65,8 +67,8 @@ man.setupTransmit(TX_433, MAN_600); // Initialising 433 wireless
     Serial.print(itempeau.part[0],HEX);
     Serial.print(" ");
     Serial.println(itempeau.part[1],HEX);
-    // buildpacket(msgpacket,itempext.part,itempeau.part);
-    for(int i=0;i<4;i++) {
+    buildpacket(msgpacket,itempext.part,itempeau.part);
+    for(uint8_t i=0;i<sizeof(msgpacket);i++) {
     Serial.println(msgpacket[i]);
     }
   }
