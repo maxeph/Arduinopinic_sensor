@@ -4,8 +4,8 @@
 
 #define DEBUG 1 // if 1, debug with Serial
 #define TX_433 2 // Pin connecter to Transmitter
-#define MSGLEN 4
-#define PCKTLEN MSGLEN+1
+#define MSGLEN 4 // Msg len is 4 = 2 signed int (2 bytes each)
+#define PCKTLEN MSGLEN+1 // +1 for the lenght of the msgpacket +2 for CRC 16
 
 
 byte msgpacket[PCKTLEN] = {PCKTLEN}; // init unsigned bytes to be sent over
