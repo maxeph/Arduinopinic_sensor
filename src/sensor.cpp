@@ -2,30 +2,37 @@
 #include <Manchester.h>  //Initialising 433 wireless library
 #include <FastCRC.h>  //CRCcheck library
 
+// Declaring definitions
 
 #define DEBUG 1 // if 1, debug with Serial
 #define TX_433 2 // Pin connecter to Transmitter
 #define MSGLEN 4 // Msg len is 4 = 2 signed int (2 bytes each)
 #define PCKTLEN MSGLEN+3 // +1 for the lenght of the msgpacket +2 for CRC 16
 
+// Declaring structs
 
-byte msgpacket[PCKTLEN] = {PCKTLEN}; // init unsigned bytes to be sent over
-FastCRC16 CRC16;
 union intarray { // shared memory for int and byte array to get its bytes
   int ints;
   byte part[2];
 };
-intarray itempext, itempeau,crcc;
+
+// Declaring variables
+
+byte msgpacket[PCKTLEN] = {PCKTLEN}; // init unsigned bytes to be sent over
+FastCRC16 CRC16; // init CRC16 object
+intarray itempext, itempeau, crcc;
+
+// Declaring functions
 
 void float2int(float *farg, int *intresult) { // Convert float 2 a signed int for 2 decimal precision
   *intresult = *farg * 100;
 }
 
 int bytes2int(byte arg[2]) { // Convert a 2byte array into int
-intarray result;
-result.part[0] = arg[0];
-result.part[1] = arg[1];
-return result.ints;
+  intarray result;
+  result.part[0] = arg[0];
+  result.part[1] = arg[1];
+  return result.ints;
 }
 
 void buildpacket(byte msg[PCKTLEN], byte part1[2], byte part2[2]) { // build array to be sent
@@ -40,17 +47,17 @@ void buildpacket(byte msg[PCKTLEN], byte part1[2], byte part2[2]) { // build arr
 
 
 
+
 /* to delete when setting up sensors */
 
 float tempext = 3.42;
 float tempeau = 17.24;
 
-
 /* */
 
 void setup() {
 
-man.setupTransmit(TX_433, MAN_600); // Initialising 433 wireless
+  man.setupTransmit(TX_433, MAN_600); // Initialising 433 wireless
 
   if (DEBUG) {  // Sending over Serial to make sure it works
     Serial.begin(9600);
@@ -71,20 +78,25 @@ man.setupTransmit(TX_433, MAN_600); // Initialising 433 wireless
     Serial.print(itempeau.part[0],HEX);
     Serial.print(" ");
     Serial.println(itempeau.part[1],HEX);
+
     buildpacket(msgpacket,itempext.part,itempeau.part);
+
     for(uint8_t i=0;i<sizeof(msgpacket);i++) {
-    Serial.println(msgpacket[i],HEX);
+      Serial.println(msgpacket[i],HEX);
     }
+
     crcc.ints = CRC16.ccitt(msgpacket, sizeof(msgpacket));
     msgpacket[5] = crcc.part[0];
     msgpacket[6] = crcc.part[1];
+
   }
-Serial.println(crcc.part[0],HEX);
-Serial.println(crcc.part[1],HEX);
+
+  Serial.println(crcc.part[0],HEX);
+  Serial.println(crcc.part[1],HEX);
 }
 
 void loop() {
-man.transmitArray(PCKTLEN, msgpacket);
+  man.transmitArray(PCKTLEN, msgpacket);
   delay(5000);
 
 }
