@@ -62,10 +62,14 @@ void setup() {
   if (DEBUG) {  // Sending over Serial to make sure it works
     Serial.begin(9600);
     Serial.println("Initialising debug mode...");
+  }
+
+// Here to delete and replace by getting sensors values in loop
 
     float2int(&tempext, &itempext.ints); // converting floats to int and storing in union objects
     float2int(&tempeau, &itempeau.ints);
 
+if (DEBUG) { // Showing value received from sensors
     Serial.print("Outside temperature (°C) : ");
     Serial.println(float(itempext.ints)/100);
     Serial.print("In bytes : ");
@@ -78,21 +82,28 @@ void setup() {
     Serial.print(itempeau.part[0],HEX);
     Serial.print(" ");
     Serial.println(itempeau.part[1],HEX);
+}
 
-    buildpacket(msgpacket,itempext.part,itempeau.part);
+    buildpacket(msgpacket,itempext.part,itempeau.part); // Building packet to be sent over
+
+if (DEBUG) { // Showing raw data sent over
 
     for(uint8_t i=0;i<sizeof(msgpacket);i++) {
       Serial.println(msgpacket[i],HEX);
+
     }
-
-    crc_local.ints = CRC16.ccitt(msgpacket, sizeof(msgpacket));
-    msgpacket[PCKTLEN-2] = crc_local.part[0];
-    msgpacket[PCKTLEN-1] = crc_local.part[1];
-
   }
 
+    crc_local.ints = CRC16.ccitt(msgpacket, sizeof(msgpacket)); // Calculating CRC16
+
+    msgpacket[PCKTLEN-2] = crc_local.part[0]; // Including raw CRC in msgpacket
+    msgpacket[PCKTLEN-1] = crc_local.part[1];
+
+
+if (DEBUG) { // Showing CRC
   Serial.println(crc_local.part[0],HEX);
   Serial.println(crc_local.part[1],HEX);
+}
 }
 
 void loop() {
