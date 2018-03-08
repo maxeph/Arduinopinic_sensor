@@ -70,9 +70,9 @@ void setup() {
     Serial.print("Outside temperature (°C) : ");
     Serial.println(float(itempext.ints)/100);
     Serial.print("In bytes : ");
-    Serial.print(itempext.part[0]);
+    Serial.print(itempext.part[0],HEX);
     Serial.print(" ");
-    Serial.println(itempext.part[1]);
+    Serial.println(itempext.part[1],HEX);
     Serial.print("Water temperature (°C) : ");
     Serial.println(float(itempeau.ints)/100);
     Serial.print("In bytes : ");
@@ -84,10 +84,21 @@ void setup() {
   buildpacket(msgpacket,itempext.part,itempeau.part); // Building packet to be sent over
 
   if (DEBUG) { // Showing raw data sent over
-
-    for(uint8_t i=0;i<sizeof(msgpacket);i++) {
-      Serial.println(msgpacket[i],HEX);
-
+    Serial.println("#######################################");
+    Serial.println("Raw data : ");
+    Serial.print("Packet length : ");
+    Serial.println(msgpacket[0],HEX);
+    for(uint8_t i=1;i<PCKTLEN-2;i++) {
+      if (i % 2 != 0) {
+        Serial.print("Msg n°");
+        Serial.print((i/2)+1);
+        Serial.print(" : ");
+        Serial.print(msgpacket[i],HEX);
+        Serial.print(" ");
+      }
+      else {
+        Serial.println(msgpacket[i],HEX);
+      }
     }
   }
 
@@ -98,8 +109,11 @@ void setup() {
 
 
   if (DEBUG) { // Showing CRC
-    Serial.println(crc_local.part[0],HEX);
+    Serial.print("CRC : ");
+    Serial.print(crc_local.part[0],HEX);
+    Serial.print(" ");
     Serial.println(crc_local.part[1],HEX);
+    Serial.println("#######################################");
   }
 }
 
