@@ -45,10 +45,7 @@ void buildpacket(byte msg[PCKTLEN], byte part1[2], byte part2[2]) { // build arr
   msg[PCKTLEN-1] = 0;
 }
 
-
-
-
-/* to delete when setting up sensors */
+/* to delete when setting up sensors in loop */
 
 float tempext = 3.42;
 float tempeau = 17.24;
@@ -64,12 +61,12 @@ void setup() {
     Serial.println("Initialising debug mode...");
   }
 
-// Here to delete and replace by getting sensors values in loop
+  // Here to move in loop when sensors in place
 
-    float2int(&tempext, &itempext.ints); // converting floats to int and storing in union objects
-    float2int(&tempeau, &itempeau.ints);
+  float2int(&tempext, &itempext.ints); // converting floats to int and storing in union objects
+  float2int(&tempeau, &itempeau.ints);
 
-if (DEBUG) { // Showing value received from sensors
+  if (DEBUG) { // Showing value received from sensors
     Serial.print("Outside temperature (°C) : ");
     Serial.println(float(itempext.ints)/100);
     Serial.print("In bytes : ");
@@ -82,11 +79,11 @@ if (DEBUG) { // Showing value received from sensors
     Serial.print(itempeau.part[0],HEX);
     Serial.print(" ");
     Serial.println(itempeau.part[1],HEX);
-}
+  }
 
-    buildpacket(msgpacket,itempext.part,itempeau.part); // Building packet to be sent over
+  buildpacket(msgpacket,itempext.part,itempeau.part); // Building packet to be sent over
 
-if (DEBUG) { // Showing raw data sent over
+  if (DEBUG) { // Showing raw data sent over
 
     for(uint8_t i=0;i<sizeof(msgpacket);i++) {
       Serial.println(msgpacket[i],HEX);
@@ -94,16 +91,16 @@ if (DEBUG) { // Showing raw data sent over
     }
   }
 
-    crc_local.ints = CRC16.ccitt(msgpacket, sizeof(msgpacket)); // Calculating CRC16
+  crc_local.ints = CRC16.ccitt(msgpacket, sizeof(msgpacket)); // Calculating CRC16
 
-    msgpacket[PCKTLEN-2] = crc_local.part[0]; // Including raw CRC in msgpacket
-    msgpacket[PCKTLEN-1] = crc_local.part[1];
+  msgpacket[PCKTLEN-2] = crc_local.part[0]; // Including raw CRC in msgpacket
+  msgpacket[PCKTLEN-1] = crc_local.part[1];
 
 
-if (DEBUG) { // Showing CRC
-  Serial.println(crc_local.part[0],HEX);
-  Serial.println(crc_local.part[1],HEX);
-}
+  if (DEBUG) { // Showing CRC
+    Serial.println(crc_local.part[0],HEX);
+    Serial.println(crc_local.part[1],HEX);
+  }
 }
 
 void loop() {
