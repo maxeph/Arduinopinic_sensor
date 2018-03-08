@@ -77,6 +77,7 @@ void loop() {
   if (isnan(tempext) || isnan(humid)) {
     if (DEBUG) {
       Serial.println("Failed to read from DHT sensor!");
+      dht.begin();
     }
     return;
   }
