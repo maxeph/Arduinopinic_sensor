@@ -20,7 +20,7 @@ union intarray { // shared memory for int and byte array to get its bytes
 
 byte msgpacket[PCKTLEN] = {PCKTLEN}; // init unsigned bytes to be sent over
 FastCRC16 CRC16; // init CRC16 object
-intarray itempext, itempeau, crcc;
+intarray itempext, itempeau, crc_local;
 
 // Declaring functions
 
@@ -41,8 +41,8 @@ void buildpacket(byte msg[PCKTLEN], byte part1[2], byte part2[2]) { // build arr
   msg[2] = part1[1];
   msg[3] = part2[0];
   msg[4] = part2[1];
-  msg[5] = 0;
-  msg[6] = 0;
+  msg[PCKTLEN-2] = 0;
+  msg[PCKTLEN-1] = 0;
 }
 
 
@@ -85,14 +85,14 @@ void setup() {
       Serial.println(msgpacket[i],HEX);
     }
 
-    crcc.ints = CRC16.ccitt(msgpacket, sizeof(msgpacket));
-    msgpacket[5] = crcc.part[0];
-    msgpacket[6] = crcc.part[1];
+    crc_local.ints = CRC16.ccitt(msgpacket, sizeof(msgpacket));
+    msgpacket[PCKTLEN-2] = crc_local.part[0];
+    msgpacket[PCKTLEN-1] = crc_local.part[1];
 
   }
 
-  Serial.println(crcc.part[0],HEX);
-  Serial.println(crcc.part[1],HEX);
+  Serial.println(crc_local.part[0],HEX);
+  Serial.println(crc_local.part[1],HEX);
 }
 
 void loop() {
