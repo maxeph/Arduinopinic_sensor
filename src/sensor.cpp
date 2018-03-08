@@ -6,7 +6,8 @@
 
 #define DEBUG 1 // if 1, debug with Serial
 #define TX_433 2 // Pin connecter to Transmitter
-#define MSGLEN 4 // Msg len is 4 = 2 signed int (2 bytes each)
+#define NBPARAM 3 // Number of int sent
+#define MSGLEN NBPARAM*2 // Msg len is 4 = 2 signed int (2 bytes each)
 #define PCKTLEN MSGLEN+3 // +1 for the lenght of the msgpacket +2 for CRC 16
 
 // Declaring structs
@@ -20,7 +21,7 @@ union intarray { // shared memory for int and byte array to get its bytes
 
 byte msgpacket[PCKTLEN] = {PCKTLEN}; // init unsigned bytes to be sent over
 FastCRC16 CRC16; // init CRC16 object
-intarray itempext, itempeau, crc_local;
+intarray itempext, itempeau, ihumid, crc_local;
 
 // Declaring functions
 
@@ -35,12 +36,14 @@ int bytes2int(byte arg[2]) { // Convert a 2byte array into int
   return result.ints;
 }
 
-void buildpacket(byte msg[PCKTLEN], byte part1[2], byte part2[2]) { // build array to be sent
+void buildpacket(byte msg[PCKTLEN], byte part1[2], byte part2[2], byte part3[2]) { // build array to be sent
   msg[0] = PCKTLEN;
   msg[1] = part1[0];
   msg[2] = part1[1];
   msg[3] = part2[0];
   msg[4] = part2[1];
+  msg[5] = part3[0];
+  msg[6] = part3[1];
   msg[PCKTLEN-2] = 0;
   msg[PCKTLEN-1] = 0;
 }
@@ -49,6 +52,7 @@ void buildpacket(byte msg[PCKTLEN], byte part1[2], byte part2[2]) { // build arr
 
 float tempext = 3.42;
 float tempeau = 17.24;
+float humid = 48.24;
 
 /* */
 
@@ -65,6 +69,7 @@ void setup() {
 
   float2int(&tempext, &itempext.ints); // converting floats to int and storing in union objects
   float2int(&tempeau, &itempeau.ints);
+  float2int(&humid, &ihumid.ints);
 
   if (DEBUG) { // Showing value received from sensors
     Serial.print("Outside temperature (°C) : ");
@@ -79,9 +84,15 @@ void setup() {
     Serial.print(itempeau.part[0],HEX);
     Serial.print(" ");
     Serial.println(itempeau.part[1],HEX);
+    Serial.print("Humidity (%) : ");
+    Serial.println(float(ihumid.ints)/100);
+    Serial.print("In bytes : ");
+    Serial.print(ihumid.part[0],HEX);
+    Serial.print(" ");
+    Serial.println(ihumid.part[1],HEX);
   }
 
-  buildpacket(msgpacket,itempext.part,itempeau.part); // Building packet to be sent over
+  buildpacket(msgpacket,itempext.part,itempeau.part,ihumid.part); // Building packet to be sent over
 
   if (DEBUG) { // Showing raw data sent over
     Serial.println("#######################################");
