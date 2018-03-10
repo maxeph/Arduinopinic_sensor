@@ -138,7 +138,6 @@ void loop() {
   }
 
   crc_local.ints = getcrc(msgpacket); // Calculating CRC16
-  Serial.println(getcrc(msgpacket));
 
   msgpacket[PCKTLEN-2] = crc_local.part[0]; // Including raw CRC in msgpacket
   msgpacket[PCKTLEN-1] = crc_local.part[1];
