@@ -43,7 +43,7 @@ int bytes2int(byte arg[2]) { // Convert a 2byte array into int
 
 int getcrc(byte msg[PCKTLEN]) { // get 16bit CRC
   Crc16 crc; // init CRC16 object
-  for (uint8_t i = 0;i<PCKTLEN;i++) {
+  for (uint8_t i = 0;i<PCKTLEN-2;i++) {
   crc.updateCrc(msg[i]);
   }
   return crc.getCrc();
