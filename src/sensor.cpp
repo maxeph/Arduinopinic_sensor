@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <Manchester.h>  //Initialising 433 wireless library
-#include <FastCRC.h>  // CRCcheck library
+#include <Crc16.h>  // CRCcheck library
 #include <DHT.h> // DHT library
 
 // Declaring definitions
@@ -23,7 +23,6 @@ union intarray { // shared memory for int and byte array to get its bytes
 // Declaring variables
 
 byte msgpacket[PCKTLEN] = {PCKTLEN}; // init unsigned bytes to be sent over
-FastCRC16 CRC16; // init CRC16 object
 intarray itempext, itempeau, ihumid, crc_local;
 float tempext, tempeau = 17.24, humid; // floats to be used with sensors
 DHT dht(DHTPIN, DHTTYPE); // Declaring sensor
@@ -40,6 +39,14 @@ int bytes2int(byte arg[2]) { // Convert a 2byte array into int
   result.part[0] = arg[0];
   result.part[1] = arg[1];
   return result.ints;
+}
+
+int getcrc(byte msg[PCKTLEN]) { // get 16bit CRC
+  Crc16 crc; // init CRC16 object
+  for (uint8_t i = 0;i<sizeof(PCKTLEN);i++) {
+  crc.updateCrc(msg[i]);
+  }
+  return crc.getCrc();
 }
 
 void buildpacket(byte msg[PCKTLEN], byte part1[2], byte part2[2], byte part3[2]) { // build array to be sent
@@ -130,7 +137,8 @@ void loop() {
     }
   }
 
-  crc_local.ints = CRC16.ccitt(msgpacket, sizeof(msgpacket)); // Calculating CRC16
+  crc_local.ints = getcrc(msgpacket); // Calculating CRC16
+  Serial.println(getcrc(msgpacket));
 
   msgpacket[PCKTLEN-2] = crc_local.part[0]; // Including raw CRC in msgpacket
   msgpacket[PCKTLEN-1] = crc_local.part[1];
