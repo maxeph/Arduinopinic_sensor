@@ -5,3 +5,4 @@
 .travis.yml
 platformio.ini
 .gitattibutes
+/lib/readme.txt
