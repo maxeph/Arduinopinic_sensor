@@ -5,13 +5,14 @@
 
 // Declaring definitions
 
-#define DEBUG 1 // if 1, debug with Serial
+#define DEBUG 2// if 0 nothing; 1 just disclosing values, 2 full debug
 #define TX_433 2 // Pin connecter to Transmitter
 #define DHTPIN 3 // Pin DHT
 #define DHTTYPE DHT22 // Pin DHT
 #define NBPARAM 3 // Number of int sent
 #define MSGLEN NBPARAM*2 // Msg len is 4 = 2 signed int (2 bytes each)
 #define PCKTLEN MSGLEN+3 // +1 for the lenght of the msgpacket +2 for CRC 16
+#define DELAY 3000 // delay between two measurments/sending min = 2000 if not the sensor heats and values are wrong
 
 // Declaring structs
 
@@ -66,7 +67,7 @@ void setup() {
   man.setupTransmit(TX_433, MAN_600); // Initialising 433 wireless
   dht.begin(); // Init DHT sensor
 
-  if (DEBUG) {  // Sending over Serial to make sure it works
+  if (DEBUG == 1 || DEBUG == 2) {  // Sending over Serial to make sure it works
     Serial.begin(9600);
     Serial.println("Initialising debug mode...");
   }
@@ -78,11 +79,11 @@ void setup() {
 }
 
 void loop() {
-  delay(5000);
-  tempext = dht.readTemperature();
+  delay(DELAY);
+  tempext = dht.readTemperature(); // minimum delay is 2 seconds if not the sensor heats and values are wrong
   humid = dht.readHumidity();
   if (isnan(tempext) || isnan(humid)) {
-    if (DEBUG) {
+    if (DEBUG == 1 || DEBUG == 2) {
       Serial.println("Failed to read from DHT sensor!");
       dht.begin();
     }
@@ -91,66 +92,48 @@ void loop() {
 
   float2int(&tempext, &itempext.ints); // converting floats to int and storing in union objects
   float2int(&humid, &ihumid.ints);
+  buildpacket(msgpacket,itempext.part,itempeau.part,ihumid.part); // Building packet to be sent over
+  crc_local.ints = getcrc(msgpacket); // Calculating CRC16
+  msgpacket[PCKTLEN-2] = crc_local.part[0]; // Including raw CRC in msgpacket
+  msgpacket[PCKTLEN-1] = crc_local.part[1];
+  man.transmitArray(PCKTLEN, msgpacket);
 
-  if (DEBUG) { // Showing value received from sensors
+  if (DEBUG == 1 || DEBUG == 2) { // Showing value received from sensors
     Serial.print("########## PACKET N° "); // Showing raw data
     Serial.print(nloop);
     Serial.println(" #################");
-    Serial.print("Outside temperature (°C) : ");
-    Serial.println(float(itempext.ints)/100);
-    Serial.print("In bytes : ");
-    Serial.print(itempext.part[0],HEX);
-    Serial.print(" ");
-    Serial.println(itempext.part[1],HEX);
-    Serial.print("Water temperature (°C) : ");
-    Serial.println(float(itempeau.ints)/100);
-    Serial.print("In bytes : ");
-    Serial.print(itempeau.part[0],HEX);
-    Serial.print(" ");
-    Serial.println(itempeau.part[1],HEX);
-    Serial.print("Humidity (%) : ");
+    Serial.print("Out temp (°C) : ");
+    Serial.print(float(itempext.ints)/100);
+    Serial.print(" # Water temp (°C) : ");
+    Serial.print(float(itempeau.ints)/100);
+    Serial.print(" # Humidity (%) : ");
     Serial.println(float(ihumid.ints)/100);
-    Serial.print("In bytes : ");
-    Serial.print(ihumid.part[0],HEX);
-    Serial.print(" ");
-    Serial.println(ihumid.part[1],HEX);
-  }
 
-  buildpacket(msgpacket,itempext.part,itempeau.part,ihumid.part); // Building packet to be sent over
+    if (DEBUG == 2) { // Showing raw data sent over
+      Serial.print("PCK LEN: ");
+      Serial.print(msgpacket[0],HEX);
+      for(uint8_t i=1;i<PCKTLEN-2;i++) {
+        if (i % 2 != 0) {
+          Serial.print(" Msg n°");
+          Serial.print((i/2)+1);
+          Serial.print(" : ");
+          Serial.print(msgpacket[i],HEX);
+          Serial.print(" ");
+        }
+        else {
+          Serial.print(msgpacket[i],HEX);
+        }
+      }
+          Serial.print(" CRC : ");
+      Serial.print(crc_local.part[0],HEX);
+      Serial.print(" ");
+      Serial.println(crc_local.part[1],HEX);
 
-  if (DEBUG) { // Showing raw data sent over
-    Serial.println("----------------------------------------");
-    Serial.println("Raw data : ");
-    Serial.print("Packet length : ");
-    Serial.println(msgpacket[0],HEX);
-    for(uint8_t i=1;i<PCKTLEN-2;i++) {
-      if (i % 2 != 0) {
-        Serial.print("Msg n°");
-        Serial.print((i/2)+1);
-        Serial.print(" : ");
-        Serial.print(msgpacket[i],HEX);
-        Serial.print(" ");
-      }
-      else {
-        Serial.println(msgpacket[i],HEX);
-      }
+
     }
-  }
 
-  crc_local.ints = getcrc(msgpacket); // Calculating CRC16
-
-  msgpacket[PCKTLEN-2] = crc_local.part[0]; // Including raw CRC in msgpacket
-  msgpacket[PCKTLEN-1] = crc_local.part[1];
+    }
 
 
-  if (DEBUG) { // Showing CRC
-    Serial.print("CRC : ");
-    Serial.print(crc_local.part[0],HEX);
-    Serial.print(" ");
-    Serial.println(crc_local.part[1],HEX);
-  }
-
-  man.transmitArray(PCKTLEN, msgpacket);
-  delay(5000);
   nloop++;
 }
