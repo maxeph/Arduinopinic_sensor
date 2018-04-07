@@ -124,16 +124,29 @@ void loop() {
           Serial.print(msgpacket[i],HEX);
         }
       }
+<<<<<<< HEAD
       Serial.print(" CRC : ");
+=======
+          Serial.print(" CRC : ");
+>>>>>>> 00937e5b5a6ce1999aacb1bd71205aff858b6d33
       Serial.print(crc_local.part[0],HEX);
       Serial.print(" ");
       Serial.println(crc_local.part[1],HEX);
 
+<<<<<<< HEAD
 
     }
 
   }
 
 
+=======
+
+    }
+
+    }
+
+
+>>>>>>> 00937e5b5a6ce1999aacb1bd71205aff858b6d33
   nloop++;
 }
