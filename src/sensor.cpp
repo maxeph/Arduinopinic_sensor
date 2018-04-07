@@ -45,7 +45,7 @@ int bytes2int(byte arg[2]) { // Convert a 2byte array into int
 int getcrc(byte msg[PCKTLEN]) { // get 16bit CRC
   Crc16 crc; // init CRC16 object
   for (uint8_t i = 0;i<PCKTLEN-2;i++) {
-  crc.updateCrc(msg[i]);
+    crc.updateCrc(msg[i]);
   }
   return crc.getCrc();
 }
@@ -124,7 +124,7 @@ void loop() {
           Serial.print(msgpacket[i],HEX);
         }
       }
-          Serial.print(" CRC : ");
+      Serial.print(" CRC : ");
       Serial.print(crc_local.part[0],HEX);
       Serial.print(" ");
       Serial.println(crc_local.part[1],HEX);
@@ -132,7 +132,7 @@ void loop() {
 
     }
 
-    }
+  }
 
 
   nloop++;
