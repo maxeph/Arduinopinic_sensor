@@ -1,3 +1,6 @@
+// Version 0.01
+// https://github.com/maxeph/Arduinopinic_sensor.git
+
 #include <Arduino.h>
 #include <Manchester.h>  //Initialising 433 wireless library
 #include <Crc16.h>  // CRCcheck library
