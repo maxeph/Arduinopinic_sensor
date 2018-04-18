@@ -12,12 +12,12 @@
 #define DEBUG 2// if 0 nothing; 1 just disclosing values, 2 full debug
 #define TX_433 2 // Pin connecter to Transmitter
 #define DHTPIN 3 // Pin DHT
-#define DHTTYPE DHT22 // Pin DHT
+#define DHTTYPE DHT22 // type of sensor
 #define DSPIN 4 // Pin DS18B20
 #define NBPARAM 3 // Number of int sent
-#define MSGLEN NBPARAM*2 // Msg len is 4 = 2 signed int (2 bytes each)
+#define MSGLEN NBPARAM*2 // Msg len is 6 = 3 signed int (2 bytes each)
 #define PCKTLEN MSGLEN+3 // +1 for the lenght of the msgpacket +2 for CRC 16
-#define DELAY 3000 // delay between two measurments/sending min = 2000 if not the sensor heats and values are wrong
+#define DELAY 3000 // delay between two measurments/sending min = 2000 if below the sensor heats and values will be wrong
 
 // Declaring structs
 
@@ -140,10 +140,6 @@ void setup() {
     Serial.begin(9600);
     Serial.println("Initialising debug mode...");
   }
-
-  // Here to move in loop when sensors in place
-
-  float2int(&tempeau, &itempeau.ints); // converting floats to int and storing in union objects
 
 }
 
