@@ -1,7 +1,7 @@
 # Arduinopinic_sensor
 This Arduino is based on DHT22 and DS18B20. The Arduino will get temperatures from both sensors (and humidity for DHT22) and send them over with a 433mhz transmitter (with CRC check). This script forms part of a broader project with a relay and a django app to consult data's over the network.
 
-##Features
+## Features
 
 - Atmega328p-based script developped with Atom;
 - Libraries are included in this repositary for an easy compilation with Atom;
