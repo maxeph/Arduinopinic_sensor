@@ -20,7 +20,7 @@ https://github.com/maxeph/Arduinopinic_website
 
 | Byte 1  | Byte 2 & Byte 3 | Byte 4 & Byte 5 |  Byte 6 & Byte 6 | Byte 8 & Byte 9|
 | ------------- | ------------- | ------------- | ------------- | ------------- |
-| Length  | DHT22 temper | DHT22 humidity | DS18B20 humidity | CRC16 check
+| Length  | DHT22 temper | DHT22 humidity | DS18B20 temper | CRC16 check
 - the packet is sent over 433mhz zith the Manchester code library
 - Debugging allowed via Serial (9600 bauds);
 
