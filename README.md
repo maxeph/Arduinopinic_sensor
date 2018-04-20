@@ -12,7 +12,7 @@ This Arduino is based on DHT22 and DS18B20. The Arduino will get temperatures fr
 - a 9-bytes array is sent via 433mhz, the structure of the packet is as follows:
 
 | Byte 1  | Byte 2 & Byte 3 | Byte 4 & Byte 5 |  Byte 6 & Byte 6 | Byte 8 & Byte 9|
-| ------------- | ------------- |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
 | Length  | DHT22 temper | DHT22 humidity | DS18B20 humidity | CRC16 check
 - the packet is sent over 433mhz zith the Manchester code library
 - Debugging allowed via Serial (9600 bauds);
