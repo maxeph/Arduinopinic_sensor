@@ -2,7 +2,9 @@
 This Arduino is based on DHT22 and DS18B20. The Arduino will get temperatures from both sensors (and humidity for DHT22) and send them over with a 433mhz transmitter (with CRC check). This script forms part of a broader project with a relay and a django app to consult data's over the network.
 
 https://github.com/maxeph/Arduinopinic_relay
+
 https://github.com/maxeph/Arduinopinic_pi
+
 https://github.com/maxeph/Arduinopinic_website
 
 
