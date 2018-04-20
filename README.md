@@ -9,13 +9,12 @@ This Arduino is based on DHT22 and DS18B20. The Arduino will get temperatures fr
 - Get temperature from DS18B20 with OneWire library;
 - Convert all three floats in 2-bytes ints (instead of 4 bytes for floats). This allows to make the packet to be sent via 433mhz as tiny as possible with 2 decimals precision;
 - a CRC16 calculation is performed and sent with the packet to enable the receiver to validate the data.
+- a 9-bytes array is sent via 433mhz, the structure of the packet is as follows:
 
-expliquer array avec un tableau
-pacauet envoyé Manchester coed
-http://mchr3k.github.io/arduino-libs-manchester/
-
-
-
+| Byte 1  | Byte 2 & Byte 3 | Byte 4 & Byte 5 |  Byte 6 & Byte 6 | Byte 8 & Byte 9|
+| ------------- | ------------- |
+| Length  | DHT22 temper | DHT22 humidity | DS18B20 humidity | CRC16 check
+- the packet is sent over 433mhz zith the Manchester code library
 - Debugging allowed via Serial (9600 bauds);
 
 
@@ -39,3 +38,5 @@ Thank you:
 	-> https://www.carnetdumaker.net/articles/mesurer-une-temperature-avec-un-capteur-1-wire-ds18b20-et-une-carte-arduino-genuino/
 - vinmenn for his CRC16 library and relevant examples :
 	-> https://github.com/vinmenn/Crc16
+- Mchr3K for his nice tutorial regqrding machester code :
+		-> http://mchr3k.github.io/arduino-libs-manchester/
