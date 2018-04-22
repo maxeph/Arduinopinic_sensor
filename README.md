@@ -7,6 +7,15 @@ https://github.com/maxeph/Arduinopinic_pi
 
 https://github.com/maxeph/Arduinopinic_website
 
+## Components
+
+- Arduino Uno (Rev3)
+- DHT22 Humidity and Temperature Sensor
+- DS18B20 1-Wire Temperature Sensor Probe Cable
+- 4.7kΩ Resistor
+- 10kΩ Resistor
+- 433Mhz RF Transmitter
+
 
 ## Features
 
