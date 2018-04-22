@@ -27,7 +27,7 @@ https://github.com/maxeph/Arduinopinic_website
 
 ## Breadboard
 
-
+![](https://github.com/maxeph/Arduinopinic_sensor/blob/master/Arduinopinic_sensor_bb.png)
 
 
 ## TO DO
