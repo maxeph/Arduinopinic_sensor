@@ -1,4 +1,9 @@
+// Version 0.02
+// Reorganisation of pin following use of standalone atmega328p
+
 // Version 0.01
+// 1st Working version with DS18B20 qnd DHT22 sent over 433mhz on arduino uno
+// consumpion = 55mA
 // https://github.com/maxeph/Arduinopinic_sensor.git
 
 #include <Arduino.h>
@@ -10,10 +15,10 @@
 // Declaring definitions
 
 #define DEBUG 2// if 0 nothing; 1 just disclosing values, 2 full debug
-#define TX_433 2 // Pin connecter to Transmitter
-#define DHTPIN 3 // Pin DHT
+#define TX_433 A4 // Pin connecter to Transmitter
+#define DHTPIN A5 // Pin DHT
 #define DHTTYPE DHT22 // type of sensor
-#define DSPIN 4 // Pin DS18B20
+#define DSPIN 6 // Pin DS18B20
 #define NBPARAM 3 // Number of int sent
 #define MSGLEN NBPARAM*2 // Msg len is 6 = 3 signed int (2 bytes each)
 #define PCKTLEN MSGLEN+3 // +1 for the lenght of the msgpacket +2 for CRC 16
