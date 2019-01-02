@@ -1,6 +1,9 @@
+//TODO  signature id?
+//
 // Version 0.02
 // - Reorganisation of pin following use of standalone atmega328p
 // - Sleep mode implemented decreasing consumption to ~6mAs
+// - Simplifying DS18B20 reading and translating comment in english
 // Version 0.01
 // 1st Working version with DS18B20 qnd DHT22 sent over 433mhz on arduino uno
 // consumption ~= 55mA
@@ -34,14 +37,6 @@ union intarray { // shared memory for int and byte array to get its bytes
 
 // Declaring variables
 
-/* Code de retour de la fonction getTemperature() */
-enum DS18B20_RCODES {
-  READ_OK,  // Lecture ok
-  NO_SENSOR_FOUND,  // Pas de capteur
-  INVALID_ADDRESS,  // Adresse reçue invalide
-  INVALID_SENSOR  // Capteur invalide (pas un DS18B20)
-};
-
 byte msgpacket[PCKTLEN] = {PCKTLEN}; // init unsigned bytes to be sent over
 intarray itempext, itempeau, ihumid, crc_local;
 float tempext, tempeau, humid; // floats to be used with sensors
@@ -70,59 +65,29 @@ int getcrc(byte msg[PCKTLEN]) { // get 16bit CRC
   return crc.getCrc();
 }
 
-/**
-* Fonction de lecture de la température via un capteur DS18B20.
-*/
-byte getTemperature(float *temperature, byte reset_search) {
+byte getTemperature(float *temperature, byte reset_search) { // Reading DS18B20
   byte data[9], addr[8];
-  // data[] : Données lues depuis le scratchpad
-  // addr[] : Adresse du module 1-Wire détecté
 
-  /* Reset le bus 1-Wire ci nécessaire (requis pour la lecture du premier capteur) */
-  if (reset_search) {
-    ds.reset_search();
-  }
-
-  /* Recherche le prochain capteur 1-Wire disponible */
-  if (!ds.search(addr)) {
-    // Pas de capteur
-    return NO_SENSOR_FOUND;
-  }
-
-  /* Vérifie que l'adresse a été correctement reçue */
-  if (OneWire::crc8(addr, 7) != addr[7]) {
-    // Adresse invalide
-    return INVALID_ADDRESS;
-  }
-
-  /* Vérifie qu'il s'agit bien d'un DS18B20 */
-  if (addr[0] != 0x28) {
-    // Mauvais type de capteur
-    return INVALID_SENSOR;
-  }
-
-  /* Reset le bus 1-Wire et sélectionne le capteur */
-  ds.reset();
+  if (reset_search) ds.reset_search();  // Reset of bus 1-Wire if requested (to read first sensor)
+  if (!ds.search(addr)) return 0xFF; //search next sensor and return error if none found
+  if (OneWire::crc8(addr, 7) != addr[7]) return 0xFF; // CRC check of  address received
+  if (addr[0] != 0x28) return 0xFF; // Check if DS18B20 if not -> error
+  ds.reset();   // Selecting the sensor found
   ds.select(addr);
-
-  /* Lance une prise de mesure de température et attend la fin de la mesure */
-  ds.write(0x44, 1);
+  ds.write(0x44, 1); // Requesting a temperature measure and waiting
   delay(800);
 
-  /* Reset le bus 1-Wire, sélectionne le capteur et envoie une demande de lecture du scratchpad */
-  ds.reset();
+  ds.reset(); // Requesting a temperature sending
   ds.select(addr);
   ds.write(0xBE);
 
-  /* Lecture du scratchpad */
-  for (byte i = 0; i < 9; i++) {
-    data[i] = ds.read();
-  }
+  // Reading the array received
+  for (byte i = 0; i < 9; i++) data[i] = ds.read();
 
-  /* Calcul de la température en degré Celsius */
+  // Converting to Celsius
   *temperature = (int16_t) ((data[1] << 8) | data[0]) * 0.0625;
-  // Pas d'erreur
-  return READ_OK;
+  // No error
+  return 0x01;
 }
 
 void buildpacket(byte msg[PCKTLEN], byte part1[2], byte part2[2], byte part3[2]) { // build array to be sent
@@ -161,7 +126,7 @@ void loop() {
     return;
   }
 
-  if (getTemperature(&tempeau, true) != READ_OK) {
+  if (getTemperature(&tempeau, true) != 0x01) {
     Serial.println("Failed to read from DS18B20 sensor!");
     return;
   }
