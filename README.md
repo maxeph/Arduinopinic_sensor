@@ -1,11 +1,11 @@
 # Arduinopinic_sensor
-This Arduino is based on DHT22 and DS18B20. The Arduino will get temperatures from both sensors (and humidity for DHT22) and send them over with a 433mhz transmitter (with CRC check). This script forms part of a broader project with a relay and a django app to consult data's over the network.
+This Arduino sketch is based on DHT22 and DS18B20. The Arduino will get temperatures from both sensors (and humidity for DHT22) and send them over with a 433mhz transmitter (with CRC check). This script forms part of a broader project with a relay and a django app to consult data's over the network.
 
 https://github.com/maxeph/Arduinopinic_relay
 
 https://github.com/maxeph/Arduinopinic_pi
 
-https://github.com/maxeph/Arduinopinic_website
+https://github.com/maxeph/Arduinopinic
 
 ## Components
 
@@ -30,20 +30,14 @@ https://github.com/maxeph/Arduinopinic_website
 | Byte 1  | Byte 2 & Byte 3 | Byte 4 & Byte 5 |  Byte 6 & Byte 6 | Byte 8 & Byte 9|
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 | Length  | DHT22 temper | DHT22 humidity | DS18B20 temper | CRC16 check
-- the packet is sent over 433mhz zith the Manchester code library
+- the packet is sent over 433mhz with the Manchester code library
+- Arduino goes in sleep mode during a certain time to reduce consumption (from 55ma to 6ma)
 - Debugging allowed via Serial (9600 bauds);
 
 
 ## Breadboard
 
 ![](https://github.com/maxeph/Arduinopinic_sensor/blob/master/Arduinopinic_sensor_bb.png)
-
-
-## TO DO
-- Allow energy savings with sleep modes;
-- Implement I2C communication with the pi to get rid of the 433mhz transmitter if the user does not need it;
-- Add lcd display for visual monitoring;
-
 
 ## Credits
 
@@ -54,5 +48,5 @@ Thank you:
 	-> https://www.carnetdumaker.net/articles/mesurer-une-temperature-avec-un-capteur-1-wire-ds18b20-et-une-carte-arduino-genuino/
 - vinmenn for his CRC16 library and relevant examples :
 	-> https://github.com/vinmenn/Crc16
-- Mchr3K for his nice tutorial regqrding machester code :
+- Mchr3K for his nice tutorial regarding machester code :
 		-> http://mchr3k.github.io/arduino-libs-manchester/
